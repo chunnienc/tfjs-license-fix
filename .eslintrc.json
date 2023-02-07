@@ -2,7 +2,7 @@
   "extends": "./node_modules/gts/",
   "rules": {
     "no-eq-null": "off",
-    "triple-equals": [true, "allow-null-check"],
+    "triple-equals": ["off", "allow-null-check"],
     "eqeqeq": ["error", "smart"]
   }
 }

@@ -24,7 +24,7 @@ import {readFileSync, writeFileSync} from 'fs';
 
 import {LICENSE_HEADERS, LicenseHeader} from './license_headers';
 
-const argsPromise = yargs(process.argv.slice(2))
+const argsPromise = yargs(process.argv)
   .array('glob')
   .describe(
     'glob',
@@ -51,9 +51,9 @@ async function addOrReplaceLicenseHeader(
 ): Promise<AddLicenseHeaderResult> {
   const LICENSE_HEADER_PATTERNS = [
     // JS style license header
-    /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
+    /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
     // CPP style license header
-    /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
+    /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
   ];
   const SHEBANG_PATTERN = /^(?<shebang>#![^\n]+)[\n]/;
 

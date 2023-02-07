@@ -1,4 +1,20 @@
 #!/usr/bin/env node
+/**
+ * @license
+ * Copyright 2023 Google LLC.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * =============================================================================
+ */
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -29,15 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @license
- * Copyright 2023 Google LLC.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * Copyright 2023 ibuted on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -50,7 +58,7 @@ const yargs_1 = __importDefault(require("yargs"));
 const simple_git_1 = require("simple-git");
 const fs_1 = require("fs");
 const license_headers_1 = require("./license_headers");
-const argsPromise = (0, yargs_1.default)(process.argv.slice(2))
+const argsPromise = (0, yargs_1.default)(process.argv)
     .array('glob')
     .describe('glob', [
     'If presented, add/update license header to the matched files from the current directory.',
@@ -66,9 +74,9 @@ async function addOrReplaceLicenseHeader(content, licenseHeader) {
     var _a, _b, _c, _d;
     const LICENSE_HEADER_PATTERNS = [
         // JS style license header
-        /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
+        /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
         // CPP style license header
-        /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
+        /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
     ];
     const SHEBANG_PATTERN = /^(?<shebang>#![^\n]+)[\n]/;
     const shebang = (_b = (_a = content.match(SHEBANG_PATTERN)) === null || _a === void 0 ? void 0 : _a.groups) === null || _b === void 0 ? void 0 : _b.shebang;
@@ -101,7 +109,7 @@ async function addOrReplaceLicenseHeader(content, licenseHeader) {
         };
     }
     // No license found, add a new license header.
-    if ((await argsPromise).noAdd) {
+    if ((await argsPromise).add === false) {
         return {
             mode: 'Unchanged',
             newContent: postProcess(content),

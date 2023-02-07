@@ -23,8 +23,8 @@
   "scripts": {
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "npx tsc",
-    "build": "npx tsc",
+    "compile": "tsc",
+    "build": "tsc",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",

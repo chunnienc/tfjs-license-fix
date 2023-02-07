@@ -88,7 +88,7 @@ async function addOrReplaceLicenseHeader(
     };
   }
   // No license found, add a new license header.
-  if ((await argsPromise).noAdd) {
+  if ((await argsPromise).add === false) {
     return {
       mode: 'Unchanged',
       newContent: postProcess(content),

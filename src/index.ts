@@ -25,15 +25,19 @@ import {readFileSync, writeFileSync} from 'fs';
 import {LICENSE_HEADERS, LicenseHeader} from './license_headers';
 
 const argsPromise = yargs(process.argv.slice(2))
-  .usage('Usage: tfjs-license-fix [...glob]')
   .array('glob')
   .describe(
     'glob',
     [
-      'If provided, add/update license header to the matched files from the current directory.',
+      'If presented, add/update license header to the matched files from the current directory.',
       'Otherwise, process the current git changed & unstaged files.',
     ].join(' ')
   )
+  .option('no-add', {
+    type: 'boolean',
+    description: 'If presented, only update existing license headers.',
+    default: false,
+  })
   .help().argv;
 
 interface AddLicenseHeaderResult {
@@ -41,10 +45,10 @@ interface AddLicenseHeaderResult {
   readonly newContent: string;
 }
 
-function addOrReplaceLicenseHeader(
+async function addOrReplaceLicenseHeader(
   content: string,
   licenseHeader: LicenseHeader
-): AddLicenseHeaderResult {
+): Promise<AddLicenseHeaderResult> {
   const LICENSE_HEADER_PATTERNS = [
     // JS style license header
     /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
@@ -84,6 +88,12 @@ function addOrReplaceLicenseHeader(
     };
   }
   // No license found, add a new license header.
+  if ((await argsPromise).noAdd) {
+    return {
+      mode: 'Unchanged',
+      newContent: postProcess(content),
+    };
+  }
   return {
     mode: 'Added',
     newContent: postProcess(`${licenseHeader.content.trim()}\n${content}`),
@@ -117,9 +127,9 @@ async function getGlobMatchedFiles(patterns: string[]): Promise<string[]> {
 /*
  * Reads the file and writes (fix) license header to it.
  * @param {string} filename The absolute path to the file.
- * @returns {string} Colored status text for this file.
+ * @returns {Promise<string>} Colored status text for this file.
  */
-function processFile(filename: string): string {
+async function processFile(filename: string): Promise<string> {
   const relativeFilename = path.relative(process.cwd(), filename);
   const isTargetFile = LICENSE_HEADERS.some(({filenamePattern}) => {
     return filenamePattern.test(filename);
@@ -141,7 +151,7 @@ function processFile(filename: string): string {
       continue;
     }
 
-    const {mode, newContent} = addOrReplaceLicenseHeader(
+    const {mode, newContent} = await addOrReplaceLicenseHeader(
       content,
       licenseHeader
     );
@@ -171,6 +181,6 @@ function processFile(filename: string): string {
     : await getGitDiffFiles();
 
   for (const filename of filenames) {
-    console.log(processFile(filename));
+    console.log(await processFile(filename));
   }
 })();

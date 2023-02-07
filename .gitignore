@@ -25,6 +25,9 @@ yalc.lock
 yarn-error.log
 .firebase/
 
+build
+dist
+
 # User-specific .bazelrc
 .bazelrc.user
 **/.parcel-cache

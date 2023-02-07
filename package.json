@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "repository": "https://github.com/chunnienc/tfjs-license-fix.git",
   "author": "Chunnien Chan <cnchan@google.com>",
-  "license": "MIT",
   "main": "./dist/index.js",
   "bin": {
     "tfjs-license-fix": "./dist/index.js"

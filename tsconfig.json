@@ -2,8 +2,12 @@
   "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
     "lib": ["ES2019"],
-    "rootDir": ".",
-    "outDir": "build"
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "commonjs",
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

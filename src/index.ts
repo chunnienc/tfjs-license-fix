@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * @license
  * Copyright 2023 Google LLC.
@@ -14,10 +15,10 @@
  * limitations under the License.
  * =============================================================================
  */
-import * as chalk from 'chalk';
 import * as glob from 'glob';
 import * as path from 'path';
-import * as yargs from 'yargs';
+import chalk from 'chalk';
+import yargs from 'yargs';
 import {simpleGit} from 'simple-git';
 import {readFileSync, writeFileSync} from 'fs';
 
@@ -29,14 +30,14 @@ const argsPromise = yargs(process.argv.slice(2))
   .describe(
     'glob',
     [
-      'If provided, add/replace license header to the matched files from the current directory.',
+      'If provided, add/update license header to the matched files from the current directory.',
       'Otherwise, process the current git changed & unstaged files.',
     ].join(' ')
   )
   .help().argv;
 
 interface AddLicenseHeaderResult {
-  readonly mode: 'Unchanged' | 'Added' | 'Replaced';
+  readonly mode: 'Unchanged' | 'Added' | 'Updated';
   readonly newContent: string;
 }
 
@@ -44,14 +45,24 @@ function addOrReplaceLicenseHeader(
   content: string,
   licenseHeader: LicenseHeader
 ): AddLicenseHeaderResult {
-  const patterns = [
+  const LICENSE_HEADER_PATTERNS = [
     // JS style license header
     /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
     // CPP style license header
     /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+).+Google(\*(?!\/)|[^*])+\*\//i,
   ];
+  const SHEBANG_PATTERN = /^(?<shebang>#![^\n]+)[\n]/;
 
-  for (const pattern of patterns) {
+  const shebang = content.match(SHEBANG_PATTERN)?.groups?.shebang;
+  content = content.replace(SHEBANG_PATTERN, '');
+  const postProcess = (content: string) => {
+    if (shebang) {
+      content = `${shebang}\n${content}`;
+    }
+    return content;
+  };
+
+  for (const pattern of LICENSE_HEADER_PATTERNS) {
     const year = content.match(pattern)?.groups?.year;
     if (year == null) {
       continue;
@@ -61,21 +72,21 @@ function addOrReplaceLicenseHeader(
       // header.
       return {
         mode: 'Unchanged',
-        newContent: content,
+        newContent: postProcess(content),
       };
     }
     // License header found and year matches. Replace it with the target license header
     // regardless of the current license style.
     const newContent = content.replace(pattern, licenseHeader.content);
     return {
-      mode: newContent === content ? 'Unchanged' : 'Replaced',
-      newContent,
+      mode: newContent === content ? 'Unchanged' : 'Updated',
+      newContent: postProcess(newContent),
     };
   }
   // No license found, add a new license header.
   return {
     mode: 'Added',
-    newContent: `${licenseHeader.content.trim()}\n${content}`,
+    newContent: postProcess(`${licenseHeader.content.trim()}\n${content}`),
   };
 }
 
@@ -146,8 +157,8 @@ function processFile(filename: string): string {
     if (mode === 'Added') {
       return chalk.green(`${relativeFilename} - ADDED`);
     } else {
-      // mode === 'Replaced'
-      return chalk.yellow(`${relativeFilename} - REPLACED`);
+      // mode === 'UPDATED'
+      return chalk.yellow(`${relativeFilename} - UPDATED`);
     }
   }
   return chalk.gray(relativeFilename);

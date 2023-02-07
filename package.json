@@ -4,6 +4,10 @@
   "repository": "https://github.com/chunnienc/tfjs-license-fix.git",
   "author": "Chunnien Chan <cnchan@google.com>",
   "license": "MIT",
+  "main": "./dist/index.js",
+  "bin": {
+    "tfjs-license-fix": "./dist/index.js"
+  },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/glob": "^8.0.1",
@@ -21,6 +25,7 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
+    "build": "tsc",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",

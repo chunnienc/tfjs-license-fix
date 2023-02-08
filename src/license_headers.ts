@@ -20,6 +20,13 @@ export interface LicenseHeader {
   readonly content: string;
 }
 
+export const LICENSE_HEADER_PATTERNS = [
+  // JS style license header
+  /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
+  // CPP style license header
+  /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
+];
+
 export const LICENSE_HEADERS: LicenseHeader[] = [
   {
     filenamePattern: /(\.ts|\.js)$/i,
@@ -62,3 +69,16 @@ export const LICENSE_HEADERS: LicenseHeader[] = [
 `.trim(),
   },
 ];
+
+// Check if LICENSE_HEADERS can be caught by LICENSE_HEADER_PATTERNS
+for (const licenseHeader of LICENSE_HEADERS) {
+  if (!LICENSE_HEADER_PATTERNS.some(pat => pat.test(licenseHeader.content))) {
+    throw new Error(
+      `License header cannot be caught by any pattern: ${JSON.stringify(
+        licenseHeader,
+        null,
+        4
+      )}`
+    );
+  }
+}

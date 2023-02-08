@@ -45,7 +45,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @license
- * Copyright 2023 ibuted on an "AS IS" BASIS,
+ * Copyright 2023 Google LLC.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -72,12 +80,6 @@ const argsPromise = (0, yargs_1.default)(process.argv)
     .help().argv;
 async function addOrReplaceLicenseHeader(content, licenseHeader) {
     var _a, _b, _c, _d;
-    const LICENSE_HEADER_PATTERNS = [
-        // JS style license header
-        /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
-        // CPP style license header
-        /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
-    ];
     const SHEBANG_PATTERN = /^(?<shebang>#![^\n]+)[\n]/;
     const shebang = (_b = (_a = content.match(SHEBANG_PATTERN)) === null || _a === void 0 ? void 0 : _a.groups) === null || _b === void 0 ? void 0 : _b.shebang;
     content = content.replace(SHEBANG_PATTERN, '');
@@ -87,7 +89,7 @@ async function addOrReplaceLicenseHeader(content, licenseHeader) {
         }
         return content;
     };
-    for (const pattern of LICENSE_HEADER_PATTERNS) {
+    for (const pattern of license_headers_1.LICENSE_HEADER_PATTERNS) {
         const year = (_d = (_c = content.match(pattern)) === null || _c === void 0 ? void 0 : _c.groups) === null || _d === void 0 ? void 0 : _d.year;
         if (year == null) {
             continue;

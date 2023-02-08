@@ -22,7 +22,11 @@ import yargs from 'yargs';
 import {simpleGit} from 'simple-git';
 import {readFileSync, writeFileSync} from 'fs';
 
-import {LICENSE_HEADERS, LicenseHeader} from './license_headers';
+import {
+  LICENSE_HEADERS,
+  LICENSE_HEADER_PATTERNS,
+  LicenseHeader,
+} from './license_headers';
 
 const argsPromise = yargs(process.argv)
   .array('glob')
@@ -49,12 +53,6 @@ async function addOrReplaceLicenseHeader(
   content: string,
   licenseHeader: LicenseHeader
 ): Promise<AddLicenseHeaderResult> {
-  const LICENSE_HEADER_PATTERNS = [
-    // JS style license header
-    /^[\s\r\n]*\/\*\*(\*(?!\/)|[^*])+@license(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
-    // CPP style license header
-    /^[\s\r\n]*\/\*(\*(?!\/)|[^*])+Copyright\s(?<year>\d+)(\*(?!\/)|[^*])+\*\//i,
-  ];
   const SHEBANG_PATTERN = /^(?<shebang>#![^\n]+)[\n]/;
 
   const shebang = content.match(SHEBANG_PATTERN)?.groups?.shebang;

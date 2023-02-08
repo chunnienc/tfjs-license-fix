@@ -19,4 +19,5 @@ export interface LicenseHeader {
     readonly year: string | number;
     readonly content: string;
 }
+export declare const LICENSE_HEADER_PATTERNS: RegExp[];
 export declare const LICENSE_HEADERS: LicenseHeader[];
